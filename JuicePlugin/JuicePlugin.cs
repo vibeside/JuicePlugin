@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Reflection;
+using MonoMod.RuntimeDetour;
+using BepInEx;
 
 namespace JuicePlugin
 {
+    [BepInPlugin("grug.juice.PlayerMods","Player Mods","0.0.0.1")]
     public class JuicePlugin
     {
         public void Awake()
         {
             Hook startOfRoundHook = new(
             typeof(PlayerGlide).GetMethod(nameof(PlayerGlide.Update), (BindingFlags)int.MaxValue),
-            (Action<HUDManager> original, HUDManager self) =>
+            (Action<PlayerGlide> original, PlayerGlide self) =>
             {
-                StartCoroutine(WaitUntilPostProcessApi());
+                self.energyCost = 0f;
                 original(self);
             });
         }
